@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE gowin-synthesis-project>
+<Project>
+    <Version>beta</Version>
+    <Device id="GW2AR-18C" package="QFN88" speed="8" partNumber="GW2AR-LV18QN88C8/I7"/>
+    <FileList>
+        <File path="C:\Users\Haziel\GBTang\src\EEPROM_24C0x.sv" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\alu.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\boy.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\brom.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\clk_div.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\common.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\control.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\cpu.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\dma.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\edgedet.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\mbc5.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\ppu.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\regfile.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\serial.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\singleport_ram.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\singlereg.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\sound.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\sound_channel_mix.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\sound_length_ctr.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\sound_noise.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\sound_square.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\sound_vol_env.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\sound_wave.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\timer.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\autofire.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\compat.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\controller_ds2.sv" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\controller_snes.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\dpram.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\dualshock_controller.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\game_data.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\game_loader.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\gbtang_top.sv" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\hdmi2\audio_clock_regeneration_packet.sv" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\hdmi2\audio_info_frame.sv" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\hdmi2\audio_sample_packet.sv" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\hdmi2\auxiliary_video_information_info_frame.sv" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\hdmi2\hdmi.sv" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\hdmi2\packet_assembler.sv" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\hdmi2\packet_picker.sv" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\hdmi2\serializer.sv" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\hdmi2\source_product_description_info_frame.sv" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\hdmi2\tmds_channel.sv" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\hw_uart.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\iosys\gowin_dpb_menu.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\iosys\iosys.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\iosys\picorv32.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\iosys\simplespimaster.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\iosys\simpleuart.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\iosys\spi_master.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\iosys\spiflash.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\iosys\textdisp.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\nano20k\config.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\nano20k\gowin_pll_gb.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\nano20k\gowin_pll_hdmi.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\nes2hdmi.sv" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\sdram_gb.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\uart_tx_V2.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\usb_hid_host.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\usb_hid_host_rom.v" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\wishbone_slaves.vh" type="verilog"/>
+        <File path="C:\Users\Haziel\GBTang\src\VerilogBoy\mbc1.v" type="verilog"/>
+    </FileList>
+    <OptionList>
+        <Option type="disable_insert_pad" value="0"/>
+        <Option type="global_freq" value="100.000"/>
+        <Option type="looplimit" value="2000"/>
+        <Option type="output_file" value="C:\Users\Haziel\GBTang\impl\gwsynthesis\gbtang_nano20k.vg"/>
+        <Option type="print_all_synthesis_warning" value="0"/>
+        <Option type="ram_rw_check" value="0"/>
+        <Option type="top_module" value="gbtang_top"/>
+        <Option type="vcc" value="1.0"/>
+        <Option type="verilog_language" value="sysv-2017"/>
+        <Option type="vhdl_language" value="vhdl-1993"/>
+    </OptionList>
+</Project>

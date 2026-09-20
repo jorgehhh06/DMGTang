@@ -1,0 +1,593 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//ENhttp://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Power Analysis Report</title>
+<style type="text/css">
+body { font-family: Verdana, Arial, sans-serif; font-size: 12px; }
+div#main_wrapper { width: 100%; }
+div#content { margin-left: 350px; margin-right: 30px; }
+div#catalog_wrapper {position: fixed; top: 30px; width: 350px; float: left; }
+div#catalog ul { list-style-type: none; }
+div#catalog li { text-align: left; list-style-type:circle; color: #0084ff; margin-top: 3px; margin-bottom: 3px; }
+div#catalog a { display:inline-block; text-decoration: none; color: #0084ff; font-weight: bold; padding: 3px; }
+div#catalog a:visited { color: #0084ff; }
+div#catalog a:hover { color: #fff; background: #0084ff; }
+hr { margin-top: 30px; margin-bottom: 30px; }
+h1, h3 { text-align: center; }
+h1 {margin-top: 50px; }
+table, th, td {white-space:pre;  border: 1px solid #aaa; }
+table { border-collapse:collapse; margin-top: 10px; margin-bottom: 20px; width: 100%; }
+th, td { padding: 5px 5px 5px 5px; }
+th { color: #fff; font-weight: bold; background-color: #0084ff; }
+table.summary_table td.label { width: 24%; min-width: 200px; background-color: #dee8f4; }
+table.thermal_table td.label { width: 24%; min-width: 200px; background-color: #dee8f4; }
+table.Configure_table td.label { width: 24%; min-width: 200px; background-color: #dee8f4; }
+table.detail_table th.label {  min-width: 8%; width: 8%; }
+</style>
+</head>
+<body>
+<div id="main_wrapper">
+<div id="catalog_wrapper">
+<div id="catalog">
+<ul>
+<li><a href="#Message" style=" font-size: 16px;">Power Messages</a>
+<ul>
+<li><a href="#Configure_Info" style=" font-size: 14px;">Configure Information</a></li>
+</ul>
+</li>
+<li><a href="#Summary" style=" font-size: 16px;">Power Summary</a>
+<ul>
+<li><a href="#Power_Info" style=" font-size: 14px;">Power Information</a></li>
+<li><a href="#Thermal_Info" style=" font-size: 14px;">Thermal Information</a></li>
+<li><a href="#Supply_Summary" style=" font-size: 14px;">Supply Information</a></li>
+</ul>
+</li>
+<li><a href="#Detail" style=" font-size: 16px;">Power Details</a>
+<ul>
+<li><a href="#By_Block_Type" style=" font-size: 14px;">Power By Block Type</a></li>
+<li><a href="#By_Hierarchy" style=" font-size: 14px;">Power By Hierarchy</a></li>
+<li><a href="#By_Clock_Domain" style=" font-size: 14px;">Power By Clock Domain</a></li>
+</ul>
+</li>
+</ul>
+</div><!-- catalog -->
+</div><!-- catalog_wrapper -->
+<div id="content">
+<h1><a name="Message">Power Messages</a></h1>
+<table class="summary_table">
+<tr>
+<td class="label">Report Title</td>
+<td>Power Analysis Report</td>
+</tr>
+<tr>
+<td class="label">Design File</td>
+<td>C:\Users\Haziel\GBTang\impl\gwsynthesis\gbtang_nano20k.vg</td>
+</tr>
+<tr>
+<td class="label">Physical Constraints File</td>
+<td>C:\Users\Haziel\GBTang\src\nano20k\nestang.cst</td>
+</tr>
+<tr>
+<td class="label">Timing Constraints File</td>
+<td>C:\Users\Haziel\GBTang\src\nano20k\nestang.sdc</td>
+</tr>
+<tr>
+<td class="label">Tool Version</td>
+<td>V1.9.11.03 Education</td>
+</tr>
+<tr>
+<td class="label">Part Number</td>
+<td>GW2AR-LV18QN88C8/I7</td>
+</tr>
+<tr>
+<td class="label">Device</td>
+<td>GW2AR-18</td>
+</tr>
+<tr>
+<td class="label">Device Version</td>
+<td>C</td>
+</tr>
+<tr>
+<td class="label">Created Time</td>
+<td>Sat Sep  5 20:52:13 2026
+</td>
+</tr>
+<tr>
+<td class="label">Legal Announcement</td>
+<td>Copyright (C)2014-2025 Gowin Semiconductor Corporation. All rights reserved.</td>
+</tr>
+</table>
+<h2><a name="Configure_Info">Configure Information:</a></h2>
+<table class="summary_table">
+<tr>
+<td class="label">Grade</td>
+<td>Commercial</td>
+</tr>
+<tr>
+<td class="label">Process</td>
+<td>Typical</td>
+</tr>
+<tr>
+<td class="label">Ambient Temperature</td>
+<td>25.000
+</tr>
+<tr>
+<td class="label">Use Custom Theta JA</td>
+<td>false</td>
+</tr>
+<tr>
+<td class="label">Heat Sink</td>
+<td>None</td>
+</tr>
+<tr>
+<td class="label">Air Flow</td>
+<td>LFM_0</td>
+</tr>
+<tr>
+<td class="label">Use Custom Theta SA</td>
+<td>false</td>
+</tr>
+<tr>
+<td class="label">Board Thermal Model</td>
+<td>None</td>
+</tr>
+<tr>
+<td class="label">Use Custom Theta JB</td>
+<td>false</td>
+</tr>
+<tr>
+<td class="label">Related Vcd File</td>
+<td></td>
+</tr>
+<tr>
+<td class="label">Related Saif File</td>
+<td></td>
+</tr>
+<tr>
+<td class="label">Filter Glitches</td>
+<td>false</td>
+</tr>
+<tr>
+<td class="label">Default IO Toggle Rate</td>
+<td>0.125</td>
+</tr>
+<tr>
+<td class="label">Default Remain Toggle Rate</td>
+<td>0.125</td>
+</tr>
+</table>
+<h1><a name="Summary">Power Summary</a></h1>
+<h2><a name="Power_Info">Power Information:</a></h2>
+<table class="summary_table">
+<tr>
+<td class="label">Total Power (mW)</td>
+<td>424.641</td>
+</tr>
+<tr>
+<td class="label">Quiescent Power (mW)</td>
+<td>122.800</td>
+</tr>
+<tr>
+<td class="label">Dynamic Power (mW)</td>
+<td>301.841</td>
+</tr>
+</table>
+<h2><a name="Thermal_Info">Thermal Information:</a></h2>
+<table class="summary_table">
+<tr>
+<td class="label">Junction Temperature</td>
+<td>37.671</td>
+</tr>
+<tr>
+<td class="label">Theta JA</td>
+<td>29.840</td>
+</tr>
+<tr>
+<td class="label">Max Allowed Ambient Temperature</td>
+<td>72.329</td>
+</tr>
+</table>
+<h2><a name="Supply_Summary">Supply Information:</a></h2>
+<table class="summary_table">
+<tr>
+<th class="label">Voltage Source</th>
+<th class="label">Voltage</th>
+<th class="label">Dynamic Current(mA)</th>
+<th class="label">Quiescent Current(mA)</th>
+<th class="label">Power(mW)</th>
+</tr>
+<tr>
+<td>VCC</td>
+<td>1.000</td>
+<td>263.602</td>
+<td>70.000</td>
+<td>333.602</td>
+</tr>
+<tr>
+<td>VCCX</td>
+<td>3.300</td>
+<td>5.794</td>
+<td>15.000</td>
+<td>68.620</td>
+</tr>
+<tr>
+<td>VCCIO33</td>
+<td>3.300</td>
+<td>5.794</td>
+<td>1.000</td>
+<td>22.420</td>
+</tr>
+</table>
+<h1><a name="Detail">Power Details</a></h1>
+<h2><a name="By_Block_Type">Power By Block Type:</a></h2>
+<table class="detail_table">
+<tr>
+<th class="label">Block Type</th>
+<th class="label">Total Power(mW)</th>
+<th class="label">Static Power(mW)</th>
+<th class="label">Average Toggle Rate(millions of transitions/sec)</th>
+</tr>
+<tr>
+<td>Logic</td>
+<td>8.490</td>
+<td>NA</td>
+<td>7.586</td>
+</tr>
+<tr>
+<td>IO</td>
+<td>63.196
+<td>19.020
+<td>7.657
+</tr>
+<tr>
+<td>BSRAM</td>
+<td>195.749
+<td>NA</td>
+<td>NA</td>
+</tr>
+<tr>
+<td>PLL</td>
+<td>45.608
+<td>NA</td>
+<td>NA</td>
+</tr>
+<tr>
+<td>DSP</td>
+<td>7.717
+<td>NA</td>
+<td>7.150
+</tr>
+</table>
+<h2><a name="By_Hierarchy">Power By Hierarchy:</a></h2>
+<table class="detail_table">
+<tr>
+<th class="label">Hierarchy Entity</th>
+<th class="label">Total Power(mW)</th>
+<th class="label">Block Dynamic Power(mW)</th>
+</tr>
+<tr>
+<td>gbtang_top</td>
+<td>257.565</td>
+<td>257.565(257.449)</td>
+<tr>
+<td>gbtang_top/iosys/</td>
+<td>4.835</td>
+<td>4.835(4.410)</td>
+<tr>
+<td>gbtang_top/iosys/disp/</td>
+<td>3.661</td>
+<td>3.661(3.444)</td>
+<tr>
+<td>gbtang_top/iosys/disp/menu_mem/</td>
+<td>3.444</td>
+<td>3.444(0.000)</td>
+<tr>
+<td>gbtang_top/iosys/flash/</td>
+<td>0.048</td>
+<td>0.048(0.013)</td>
+<tr>
+<td>gbtang_top/iosys/flash/spi/</td>
+<td>0.013</td>
+<td>0.013(0.000)</td>
+<tr>
+<td>gbtang_top/iosys/rv32/</td>
+<td>0.581</td>
+<td>0.581(0.043)</td>
+<tr>
+<td>gbtang_top/iosys/rv32/cpuregs/</td>
+<td>0.043</td>
+<td>0.043(0.000)</td>
+<tr>
+<td>gbtang_top/iosys/simplespi/</td>
+<td>0.029</td>
+<td>0.029(0.013)</td>
+<tr>
+<td>gbtang_top/iosys/simplespi/spi_io_master/</td>
+<td>0.013</td>
+<td>0.013(0.000)</td>
+<tr>
+<td>gbtang_top/iosys/simpleuart/</td>
+<td>0.090</td>
+<td>0.090(0.000)</td>
+<tr>
+<td>gbtang_top/joy1_ds2/</td>
+<td>0.042</td>
+<td>0.042(0.042)</td>
+<tr>
+<td>gbtang_top/joy1_ds2/ds/</td>
+<td>0.042</td>
+<td>0.042(0.028)</td>
+<tr>
+<td>gbtang_top/joy1_ds2/ds/pls/</td>
+<td>0.023</td>
+<td>0.023(0.000)</td>
+<tr>
+<td>gbtang_top/joy1_ds2/ds/rxd/</td>
+<td>0.002</td>
+<td>0.002(0.000)</td>
+<tr>
+<td>gbtang_top/joy1_ds2/ds/txd/</td>
+<td>0.003</td>
+<td>0.003(0.000)</td>
+<tr>
+<td>gbtang_top/joy1_snes/</td>
+<td>0.019</td>
+<td>0.019(0.000)</td>
+<tr>
+<td>gbtang_top/joy2_ds2/</td>
+<td>0.042</td>
+<td>0.042(0.042)</td>
+<tr>
+<td>gbtang_top/joy2_ds2/ds/</td>
+<td>0.042</td>
+<td>0.042(0.028)</td>
+<tr>
+<td>gbtang_top/joy2_ds2/ds/pls/</td>
+<td>0.023</td>
+<td>0.023(0.000)</td>
+<tr>
+<td>gbtang_top/joy2_ds2/ds/rxd/</td>
+<td>0.002</td>
+<td>0.002(0.000)</td>
+<tr>
+<td>gbtang_top/joy2_ds2/ds/txd/</td>
+<td>0.003</td>
+<td>0.003(0.000)</td>
+<tr>
+<td>gbtang_top/joy2_snes/</td>
+<td>0.019</td>
+<td>0.019(0.000)</td>
+<tr>
+<td>gbtang_top/mapper_1/</td>
+<td>0.014</td>
+<td>0.014(0.000)</td>
+<tr>
+<td>gbtang_top/mapper_5/</td>
+<td>0.008</td>
+<td>0.008(0.000)</td>
+<tr>
+<td>gbtang_top/pll_gb/</td>
+<td>6.778</td>
+<td>6.778(0.000)</td>
+<tr>
+<td>gbtang_top/pll_hdmi/</td>
+<td>38.831</td>
+<td>38.831(0.000)</td>
+<tr>
+<td>gbtang_top/sdram/</td>
+<td>0.317</td>
+<td>0.317(0.000)</td>
+<tr>
+<td>gbtang_top/u_hdmi/</td>
+<td>161.561</td>
+<td>161.561(1.432)</td>
+<tr>
+<td>gbtang_top/u_hdmi/hdmi/</td>
+<td>1.432</td>
+<td>1.432(1.308)</td>
+<tr>
+<td>gbtang_top/u_hdmi/hdmi/tmds_gen[0].tmds_channel/</td>
+<td>0.162</td>
+<td>0.162(0.000)</td>
+<tr>
+<td>gbtang_top/u_hdmi/hdmi/tmds_gen[1].tmds_channel/</td>
+<td>0.157</td>
+<td>0.157(0.000)</td>
+<tr>
+<td>gbtang_top/u_hdmi/hdmi/tmds_gen[2].tmds_channel/</td>
+<td>0.151</td>
+<td>0.151(0.000)</td>
+<tr>
+<td>gbtang_top/u_hdmi/hdmi/true_hdmi_output.packet_assembler/</td>
+<td>0.303</td>
+<td>0.303(0.000)</td>
+<tr>
+<td>gbtang_top/u_hdmi/hdmi/true_hdmi_output.packet_picker/</td>
+<td>0.536</td>
+<td>0.536(0.140)</td>
+<tr>
+<td>gbtang_top/u_hdmi/hdmi/true_hdmi_output.packet_picker/audio_clock_regeneration_packet/</td>
+<td>0.140</td>
+<td>0.140(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/</td>
+<td>44.985</td>
+<td>44.985(43.424)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/br_wram/</td>
+<td>4.500</td>
+<td>4.500(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/brom/</td>
+<td>1.287</td>
+<td>1.287(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/cpu/</td>
+<td>1.343</td>
+<td>1.343(0.801)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/cpu/alu/</td>
+<td>0.329</td>
+<td>0.329(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/cpu/control/</td>
+<td>0.362</td>
+<td>0.362(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/cpu/regfile/</td>
+<td>0.110</td>
+<td>0.110(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/dma/</td>
+<td>0.106</td>
+<td>0.106(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/ppu/</td>
+<td>34.148</td>
+<td>34.148(4.500)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/ppu/br_vram/</td>
+<td>4.500</td>
+<td>4.500(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/serial/</td>
+<td>0.035</td>
+<td>0.035(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/</td>
+<td>1.817</td>
+<td>1.817(0.811)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch1/</td>
+<td>0.339</td>
+<td>0.339(0.056)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch1/sound_length_ctr/</td>
+<td>0.032</td>
+<td>0.032(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch1/sound_vol_env/</td>
+<td>0.022</td>
+<td>0.022(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch1/start_edgedet/</td>
+<td>0.002</td>
+<td>0.002(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch2/</td>
+<td>0.120</td>
+<td>0.120(0.056)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch2/sound_channel_mix/</td>
+<td>0.006</td>
+<td>0.006(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch2/sound_length_ctr/</td>
+<td>0.027</td>
+<td>0.027(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch2/sound_vol_env/</td>
+<td>0.021</td>
+<td>0.021(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch2/start_edgedet/</td>
+<td>0.002</td>
+<td>0.002(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch3/</td>
+<td>0.112</td>
+<td>0.112(0.038)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch3/sound_length_ctr/</td>
+<td>0.036</td>
+<td>0.036(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch3/start_edgedet/</td>
+<td>0.002</td>
+<td>0.002(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch4/</td>
+<td>0.240</td>
+<td>0.240(0.056)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch4/clk_shift_edgedet/</td>
+<td>0.002</td>
+<td>0.002(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch4/sound_channel_mix/</td>
+<td>0.004</td>
+<td>0.004(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch4/sound_length_ctr/</td>
+<td>0.027</td>
+<td>0.027(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch4/sound_vol_env/</td>
+<td>0.021</td>
+<td>0.021(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/sound/sound_ch4/start_edgedet/</td>
+<td>0.002</td>
+<td>0.002(0.000)</td>
+<tr>
+<td>gbtang_top/verilogboy_core/timer/</td>
+<td>0.189</td>
+<td>0.189(0.000)</td>
+</table>
+<h2><a name="By_Clock_Domain">Power By Clock Domain:</a></h2>
+<table class="detail_table">
+<tr>
+<th class="label">Clock Domain</th>
+<th class="label">Clock Frequency(Mhz)</th>
+<th class="label">Total Dynamic Power(mW)</th>
+</tr>
+<tr>
+<td>gb_clk</td>
+<td>100.000</td>
+<td>45.067</td>
+</tr>
+<tr>
+<td>pll_gb/rpll_inst/CLKOUTD3.default_gen_clk</td>
+<td>21.598</td>
+<td>36.282</td>
+</tr>
+<tr>
+<td>pll_gb/rpll_inst/CLKOUT.default_gen_clk</td>
+<td>64.795</td>
+<td>0.293</td>
+</tr>
+<tr>
+<td>div5/CLKOUT.default_gen_clk</td>
+<td>74.250</td>
+<td>130.357</td>
+</tr>
+<tr>
+<td>NO CLOCK DOMAIN</td>
+<td>0.000</td>
+<td>0.000</td>
+</tr>
+<tr>
+<td>verilogboy_core/sound/sound_ch2/octo_freq_out</td>
+<td>100.000</td>
+<td>0.017</td>
+</tr>
+<tr>
+<td>verilogboy_core/sound/sound_ch1/octo_freq_out</td>
+<td>100.000</td>
+<td>0.017</td>
+</tr>
+<tr>
+<td>hclk5</td>
+<td>371.250</td>
+<td>0.025</td>
+</tr>
+<tr>
+<td>clk</td>
+<td>26.998</td>
+<td>45.608</td>
+</tr>
+</table>
+</div><!-- content -->
+</div><!-- main_wrapper -->
+</body>
+</html>

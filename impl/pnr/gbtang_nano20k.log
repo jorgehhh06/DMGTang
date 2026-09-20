@@ -1,0 +1,38 @@
+Reading netlist file: "C:\Users\Haziel\GBTang\impl\gwsynthesis\gbtang_nano20k.vg"
+Parsing netlist file "C:\Users\Haziel\GBTang\impl\gwsynthesis\gbtang_nano20k.vg" completed
+Processing netlist completed
+Reading constraint file: "C:\Users\Haziel\GBTang\src\nano20k\nestang.cst"
+Physical Constraint parsed completed
+Running placement......
+[10%] Placement Phase 0 completed
+[20%] Placement Phase 1 completed
+[30%] Placement Phase 2 completed
+WARN  (TA1132) :  'gb_clk' was determined to be a clock but was not created.
+WARN  (TA1132) :  'verilogboy_core/sound/sound_ch1/octo_freq_out' was determined to be a clock but was not created.
+WARN  (TA1132) :  'verilogboy_core/sound/sound_ch2/octo_freq_out' was determined to be a clock but was not created.
+WARN  (TA1132) :  'div5/CLKOUT.default_gen_clk' was determined to be a clock but was not created.
+WARN  (TA1117) : Can't calculate clocks' relationship between: "pll_gb/rpll_inst/CLKOUTD3.default_gen_clk" and "hclk5"
+WARN  (TA1117) : Can't calculate clocks' relationship between: "pll_gb/rpll_inst/CLKOUT.default_gen_clk" and "gb_clk"
+WARN  (TA1117) : Can't calculate clocks' relationship between: "gb_clk" and "pll_gb/rpll_inst/CLKOUT.default_gen_clk"
+WARN  (TA1117) : Can't calculate clocks' relationship between: "pll_gb/rpll_inst/CLKOUTD3.default_gen_clk" and "div5/CLKOUT.default_gen_clk"
+[50%] Placement Phase 3 completed
+Running routing......
+[60%] Routing Phase 0 completed
+[70%] Routing Phase 1 completed
+[80%] Routing Phase 2 completed
+WARN  (PR1014) : Generic routing resource will be used to clock signal 'sys_clk_d' by the specified constraint. And then it may lead to the excessive delay or skew
+[90%] Routing Phase 3 completed
+Running timing analysis......
+[95%] Timing analysis completed
+Placement and routing completed
+Bitstream generation in progress......
+Bitstream generation completed
+Running power analysis......
+[100%] Power analysis completed
+Generate file "C:\Users\Haziel\GBTang\impl\pnr\gbtang_nano20k.power.html" completed
+Generate file "C:\Users\Haziel\GBTang\impl\pnr\gbtang_nano20k.pin.html" completed
+Generate file "C:\Users\Haziel\GBTang\impl\pnr\gbtang_nano20k.rpt.html" completed
+Generate file "C:\Users\Haziel\GBTang\impl\pnr\gbtang_nano20k.rpt.txt" completed
+Generate file "C:\Users\Haziel\GBTang\impl\pnr\gbtang_nano20k.tr.html" completed
+Sat Sep  5 20:52:14 2026
+

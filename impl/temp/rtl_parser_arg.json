@@ -1,0 +1,261 @@
+{
+ "Device" : "GW2AR-18C",
+ "Files" : [
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/EEPROM_24C0x.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/alu.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/boy.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/brom.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/clk_div.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/common.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/control.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/cpu.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/dma.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/edgedet.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/mbc1.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/mbc5.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/ppu.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/regfile.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/serial.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/singleport_ram.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/singlereg.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/sound.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/sound_channel_mix.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/sound_length_ctr.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/sound_noise.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/sound_square.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/sound_vol_env.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/sound_wave.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/VerilogBoy/timer.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/autofire.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/compat.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/controller_ds2.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/controller_snes.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/dpram.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/dualshock_controller.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/game_data.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/game_loader.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/gbtang_top.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/hdmi2/audio_clock_regeneration_packet.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/hdmi2/audio_info_frame.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/hdmi2/audio_sample_packet.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/hdmi2/auxiliary_video_information_info_frame.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/hdmi2/hdmi.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/hdmi2/packet_assembler.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/hdmi2/packet_picker.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/hdmi2/serializer.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/hdmi2/source_product_description_info_frame.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/hdmi2/tmds_channel.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/hw_uart.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/iosys/gowin_dpb_menu.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/iosys/iosys.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/iosys/picorv32.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/iosys/simplespimaster.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/iosys/simpleuart.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/iosys/spi_master.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/iosys/spiflash.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/iosys/textdisp.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/nano20k/config.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/nano20k/gowin_pll_gb.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/nano20k/gowin_pll_hdmi.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/nes2hdmi.sv",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/sdram_gb.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/uart_tx_V2.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/usb_hid_host.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/usb_hid_host_rom.v",
+   "Type" : "verilog"
+  },
+  {
+   "Path" : "C:/Users/Haziel/GBTang/src/wishbone_slaves.vh",
+   "Type" : "verilog"
+  }
+ ],
+ "IncludePath" : [
+
+ ],
+ "LoopLimit" : 2000,
+ "ResultFile" : "C:/Users/Haziel/GBTang/impl/temp/rtl_parser.result",
+ "Top" : "gbtang_top",
+ "VerilogStd" : "sysv",
+ "VhdlStd" : "vhdl_93"
+}

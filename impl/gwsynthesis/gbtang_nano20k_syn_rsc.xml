@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module name="gbtang_top" Register="124" Alu="29" Lut="121" T_Register="3573(124)" T_Alu="856(29)" T_Lut="7205(121)" T_MULT9X9="1(0)" T_MULTADDALU18X18="3(0)" T_Bsram="38(0)" T_Ssram="59(0)">
+ <SubModule name="pll_gb"/>
+ <SubModule name="pll_hdmi"/>
+ <SubModule name="verilogboy_core" Register="13" Lut="299" Bsram="1" T_Register="1097(13)" T_Alu="205(0)" T_Lut="2579(299)" T_MULT9X9="1(0)" T_Bsram="12(1)" T_Ssram="27(0)">
+  <SubModule name="cpu" Register="153" Alu="12" Lut="424" T_Register="279(153)" T_Alu="36(12)" T_Lut="1002(424)" T_Ssram="2(0)">
+   <SubModule name="control" Register="52" Lut="341" T_Register="52(52)" T_Lut="341(341)"/>
+   <SubModule name="regfile" Register="74" Lut="64" Ssram="2" T_Register="74(74)" T_Lut="64(64)" T_Ssram="2(2)"/>
+   <SubModule name="alu" Alu="24" Lut="173" T_Alu="24(24)" T_Lut="173(173)"/>
+  </SubModule>
+  <SubModule name="dma" Register="49" Alu="7" Lut="30" T_Register="49(49)" T_Alu="7(7)" T_Lut="30(30)"/>
+  <SubModule name="ppu" Register="313" Alu="72" Lut="573" Bsram="2" Ssram="23" T_Register="313(313)" T_Alu="72(72)" T_Lut="573(573)" T_Bsram="6(2)" T_Ssram="23(23)">
+   <SubModule name="br_vram" Bsram="4" T_Bsram="4(4)"/>
+  </SubModule>
+  <SubModule name="timer" Register="46" Alu="15" Lut="51" T_Register="46(46)" T_Alu="15(15)" T_Lut="51(51)"/>
+  <SubModule name="serial" Register="18" Lut="27" T_Register="18(18)" T_Lut="27(27)"/>
+  <SubModule name="sound" Register="203" Alu="30" Lut="216" MULT9X9="1" Ssram="2" T_Register="379(203)" T_Alu="75(30)" T_Lut="597(216)" T_MULT9X9="1(1)" T_Ssram="2(2)">
+   <SubModule name="sound_ch1" Register="30" Alu="23" Lut="91" T_Register="45(30)" T_Alu="23(23)" T_Lut="140(91)">
+    <SubModule name="start_edgedet" Register="1" Lut="1" T_Register="1(1)" T_Lut="1(1)"/>
+    <SubModule name="sound_vol_env" Register="7" Lut="19" T_Register="7(7)" T_Lut="19(19)"/>
+    <SubModule name="sound_length_ctr" Register="7" Lut="29" T_Register="7(7)" T_Lut="29(29)"/>
+   </SubModule>
+   <SubModule name="sound_ch2" Register="30" Lut="45" T_Register="45(30)" T_Lut="94(45)">
+    <SubModule name="start_edgedet" Register="1" Lut="1" T_Register="1(1)" T_Lut="1(1)"/>
+    <SubModule name="sound_vol_env" Register="7" Lut="18" T_Register="7(7)" T_Lut="18(18)"/>
+    <SubModule name="sound_length_ctr" Register="7" Lut="24" T_Register="7(7)" T_Lut="24(24)"/>
+    <SubModule name="sound_channel_mix" Lut="6" T_Lut="6(6)"/>
+   </SubModule>
+   <SubModule name="sound_ch3" Register="17" Alu="4" Lut="38" T_Register="27(17)" T_Alu="4(4)" T_Lut="71(38)">
+    <SubModule name="start_edgedet" Register="1" Lut="1" T_Register="1(1)" T_Lut="1(1)"/>
+    <SubModule name="sound_length_ctr" Register="9" Lut="32" T_Register="9(9)" T_Lut="32(32)"/>
+   </SubModule>
+   <SubModule name="sound_ch4" Register="43" Alu="18" Lut="28" T_Register="59(43)" T_Alu="18(18)" T_Lut="76(28)">
+    <SubModule name="start_edgedet" Register="1" Lut="1" T_Register="1(1)" T_Lut="1(1)"/>
+    <SubModule name="clk_shift_edgedet" Register="1" Lut="1" T_Register="1(1)" T_Lut="1(1)"/>
+    <SubModule name="sound_vol_env" Register="7" Lut="18" T_Register="7(7)" T_Lut="18(18)"/>
+    <SubModule name="sound_length_ctr" Register="7" Lut="24" T_Register="7(7)" T_Lut="24(24)"/>
+    <SubModule name="sound_channel_mix" Lut="4" T_Lut="4(4)"/>
+   </SubModule>
+  </SubModule>
+  <SubModule name="brom" Bsram="1" T_Bsram="1(1)"/>
+  <SubModule name="br_wram" Bsram="4" T_Bsram="4(4)"/>
+ </SubModule>
+ <SubModule name="mapper_1" Register="9" Lut="9" T_Register="9(9)" T_Lut="9(9)"/>
+ <SubModule name="mapper_5" Register="10" Lut="3" T_Register="10(10)" T_Lut="3(3)"/>
+ <SubModule name="sdram" Register="166" Alu="22" Lut="242" T_Register="166(166)" T_Alu="22(22)" T_Lut="242(242)"/>
+ <SubModule name="u_hdmi" Register="143" Alu="48" Lut="692" MULTADDALU18X18="3" Bsram="25" T_Register="758(143)" T_Alu="119(48)" T_Lut="1802(692)" T_MULTADDALU18X18="3(3)" T_Bsram="25(25)">
+  <SubModule name="hdmi" Register="68" Alu="10" Lut="56" T_Register="615(68)" T_Alu="71(10)" T_Lut="1110(56)">
+   <SubModule name="true_hdmi_output.packet_picker" Register="416" Lut="318" T_Register="460(416)" T_Alu="21(0)" T_Lut="326(318)">
+    <SubModule name="audio_clock_regeneration_packet" Register="44" Alu="21" Lut="8" T_Register="44(44)" T_Alu="21(21)" T_Lut="8(8)"/>
+   </SubModule>
+   <SubModule name="true_hdmi_output.packet_assembler" Register="45" Alu="4" Lut="361" T_Register="45(45)" T_Alu="4(4)" T_Lut="361(361)"/>
+   <SubModule name="tmds_gen[0].tmds_channel" Register="14" Alu="12" Lut="130" T_Register="14(14)" T_Alu="12(12)" T_Lut="130(130)"/>
+   <SubModule name="tmds_gen[1].tmds_channel" Register="14" Alu="12" Lut="123" T_Register="14(14)" T_Alu="12(12)" T_Lut="123(123)"/>
+   <SubModule name="tmds_gen[2].tmds_channel" Register="14" Alu="12" Lut="114" T_Register="14(14)" T_Alu="12(12)" T_Lut="114(114)"/>
+   <SubModule name="serializer"/>
+  </SubModule>
+ </SubModule>
+ <SubModule name="iosys" Register="396" Alu="170" Lut="696" T_Register="1162(396)" T_Alu="449(170)" T_Lut="2246(696)" T_Bsram="1(0)" T_Ssram="32(0)">
+  <SubModule name="rv32" Register="429" Alu="187" Lut="1072" T_Register="429(429)" T_Alu="187(187)" T_Lut="1141(1072)" T_Ssram="32(0)">
+   <SubModule name="cpuregs" Lut="69" Ssram="32" T_Lut="69(69)" T_Ssram="32(32)"/>
+  </SubModule>
+  <SubModule name="disp" Register="55" Alu="31" Lut="73" T_Register="55(55)" T_Alu="31(31)" T_Lut="73(73)" T_Bsram="1(0)">
+   <SubModule name="menu_mem" Bsram="1" T_Bsram="1(1)"/>
+  </SubModule>
+  <SubModule name="simpleuart" Register="83" Alu="61" Lut="80" T_Register="83(83)" T_Alu="61(61)" T_Lut="80(80)"/>
+  <SubModule name="simplespi" Register="48" Lut="48" T_Register="84(48)" T_Lut="92(48)">
+   <SubModule name="spi_io_master" Register="36" Lut="44" T_Register="36(36)" T_Lut="44(44)"/>
+  </SubModule>
+  <SubModule name="flash" Register="79" Lut="120" T_Register="115(79)" T_Lut="164(120)">
+   <SubModule name="spi" Register="36" Lut="44" T_Register="36(36)" T_Lut="44(44)"/>
+  </SubModule>
+ </SubModule>
+ <SubModule name="joy1_snes" Register="55" Lut="59" T_Register="55(55)" T_Lut="59(59)"/>
+ <SubModule name="joy2_snes" Register="54" Lut="60" T_Register="54(54)" T_Lut="60(60)"/>
+ <SubModule name="joy1_ds2" T_Register="69(0)" T_Alu="16(0)" T_Lut="42(0)">
+  <SubModule name="ds" Register="25" Alu="6" Lut="10" T_Register="69(25)" T_Alu="16(6)" T_Lut="42(10)">
+   <SubModule name="pls" Register="19" Alu="10" Lut="22" T_Register="19(19)" T_Alu="10(10)" T_Lut="22(22)"/>
+   <SubModule name="txd" Register="9" Lut="10" T_Register="9(9)" T_Lut="10(10)"/>
+   <SubModule name="rxd" Register="16" T_Register="16(16)"/>
+  </SubModule>
+ </SubModule>
+ <SubModule name="joy2_ds2" T_Register="69(0)" T_Alu="16(0)" T_Lut="42(0)">
+  <SubModule name="ds" Register="25" Alu="6" Lut="10" T_Register="69(25)" T_Alu="16(6)" T_Lut="42(10)">
+   <SubModule name="pls" Register="19" Alu="10" Lut="22" T_Register="19(19)" T_Alu="10(10)" T_Lut="22(22)"/>
+   <SubModule name="txd" Register="9" Lut="10" T_Register="9(9)" T_Lut="10(10)"/>
+   <SubModule name="rxd" Register="16" T_Register="16(16)"/>
+  </SubModule>
+ </SubModule>
+</Module>
