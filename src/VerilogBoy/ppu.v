@@ -132,7 +132,6 @@ module ppu(
     assign oam_data_in = oam_din;
     assign oam_data_out_byte = (oam_rd_addr[0]) ? oam_data_out[15:8] : oam_data_out[7:0];
     
-    // FIX DMA (Dr Mario Crash): El DMA siempre debe poder acceder a la OAM
     assign oam_we = oam_wr; 
     assign oam_dout = (oam_access_ext) ? (oam_data_out_byte) : (8'hFF);
 
@@ -169,7 +168,7 @@ module ppu(
                                (pf_output_palette_id == PPU_PAL_OB0) ? (reg_obp0) :
                                (pf_output_palette_id == PPU_PAL_OB1) ? (reg_obp1) : (8'hFF);
                                
-    // INYECCIÓN LÓGICA DE JAVA: Background color 0 si está apagado
+    // FIX PPU BACKGROUND OFF: Si el BG está apagado, escupe color 00 (blanco puro) siempre
     wire [1:0] real_pixel_id = (!reg_bg_disp && pf_output_palette_id == PPU_PAL_BG) ? 2'b00 : pf_output_pixel_id;
     
     assign pf_output_pixel = (real_pixel_id == 2'b11) ? (pf_output_palette[7:6]) :
@@ -177,19 +176,19 @@ module ppu(
                              (real_pixel_id == 2'b01) ? (pf_output_palette[3:2]) :
                              (real_pixel_id == 2'b00) ? (pf_output_palette[1:0]) : (2'b00);
 
-    reg [2:0] pf_empty; // Indicate if the Pixel FIFO is empty. 
-    localparam PF_INITA = 3'd5; // When a line start...
-    localparam PF_INITB = 3'd4; // Line start, 2 pixels out, 8 rendered
-    localparam PF_EMPTY = 3'd3; // When the pipeline get flushed
-    localparam PF_HALF  = 3'd2; // After flushed, 8 pixels in
-    localparam PF_FIN   = 3'd1; // 16 pixels in, but still no wait cycles
-    localparam PF_FULL  = 3'd0; // Normal
+    reg [2:0] pf_empty; 
+    localparam PF_INITA = 3'd5; 
+    localparam PF_INITB = 3'd4; 
+    localparam PF_EMPTY = 3'd3; 
+    localparam PF_HALF  = 3'd2; 
+    localparam PF_FIN   = 3'd1; 
+    localparam PF_FULL  = 3'd0; 
 
     assign cpl = ~clk;
     
     // HV Timing
     localparam PPU_H_FRONT  = 9'd76;
-    localparam PPU_H_SYNC   = 9'd4;    // So front porch + sync = OAM search
+    localparam PPU_H_SYNC   = 9'd4;    
     localparam PPU_H_TOTAL  = 9'd456;
     localparam PPU_H_PIXEL  = 9'd160;
     localparam PPU_H_OUTPUT = 8'd168;
@@ -234,25 +233,25 @@ module ppu(
     
     // Render FSM
     localparam S_IDLE     = 5'd0; 
-    localparam S_BLANK    = 5'd1;  // H Blank and V Blank
-    localparam S_OAMX     = 5'd2;  // OAM Search X check
-    localparam S_OAMY     = 5'd3;  // OAM Search Y check
-    localparam S_FTIDA    = 5'd4;  // Fetch Read Tile ID Stage A (Address Setup)
-    localparam S_FTIDB    = 5'd5;  // Fetch Read Tile ID Stage B (Data Read)
-    localparam S_FRD0A    = 5'd6;  // Fetch Read Data 0 Stage A
-    localparam S_FRD0B    = 5'd7;  // Fetch Read Data 0 Stage B
-    localparam S_FRD1A    = 5'd8;  // Fetch Read Data 1 Stage A
-    localparam S_FRD1B    = 5'd9;  // Fetch Read Data 1 Stage B
-    localparam S_FWAITA   = 5'd10; // Fetch Wait Stage A (Idle)
-    localparam S_FWAITB   = 5'd11; // Fetch Wait Stage B (Load to FIFO?)
-    localparam S_SWW      = 5'd12; // Fetch Switch to Window
-    localparam S_OAMRDA   = 5'd13; // OAM Read Stage A
-    localparam S_OAMRDB   = 5'd14; // OAM Read Stage B
-    localparam S_OFRD0A   = 5'd15; // Object Fetch Read Data 0 Stage A
-    localparam S_OFRD0B   = 5'd16; // Object Fetch Read Data 0 Stage B
-    localparam S_OFRD1A   = 5'd17; // Object Fetch Read Data 1 Stage A
-    localparam S_OFRD1B   = 5'd18; // Object Fetch Read Data 1 Stage B
-    localparam S_OWB      = 5'd19; // Object Write Back
+    localparam S_BLANK    = 5'd1;  
+    localparam S_OAMX     = 5'd2;  
+    localparam S_OAMY     = 5'd3;  
+    localparam S_FTIDA    = 5'd4;  
+    localparam S_FTIDB    = 5'd5;  
+    localparam S_FRD0A    = 5'd6;  
+    localparam S_FRD0B    = 5'd7;  
+    localparam S_FRD1A    = 5'd8;  
+    localparam S_FRD1B    = 5'd9;  
+    localparam S_FWAITA   = 5'd10; 
+    localparam S_FWAITB   = 5'd11; 
+    localparam S_SWW      = 5'd12; 
+    localparam S_OAMRDA   = 5'd13; 
+    localparam S_OAMRDB   = 5'd14; 
+    localparam S_OFRD0A   = 5'd15; 
+    localparam S_OFRD0B   = 5'd16; 
+    localparam S_OFRD1A   = 5'd17; 
+    localparam S_OFRD1B   = 5'd18; 
+    localparam S_OWB      = 5'd19; 
     
     localparam PPU_OAM_SEARCH_LENGTH = 6'd40;
 
@@ -261,17 +260,17 @@ module ppu(
     reg [7:0] h_pix_render; 
     reg [7:0] h_pix_output; 
     
-    // FIX DV: Alineación perfecta de Sprites con Pantalla (sin el +1)
+    // FIX DV DRIFT: Alienación exacta Sprite-Pantalla
     wire [7:0] h_pix_obj = h_pix_output; 
     wire [7:0] v_pix = v_count;
     
     reg window_triggered; 
     wire render_window_or_bg = window_triggered;
     
-    // FIX DV: Offset de WX para no activar la ventana muy temprano
+    // FIX DV WINDOW: Detonador condicional exacto
     wire window_trigger = (((h_pix_output) == (reg_wx + 1'b1))&&(v_pix >= reg_wy)&&(reg_win_en)&&(~window_triggered)) ? 1 : 0;
     
-    // FIX DV: Máquina de estados infalible para contar líneas de ventana
+    // FIX DV WINDOW: Máquina de estados infalible para el contador Y de la ventana
     reg [7:0] window_line;
     reg window_triggered_last;
 
@@ -282,7 +281,6 @@ module ppu(
     always @(posedge clk) begin
         if (rst || !reg_lcd_en || v_count >= 144) 
             window_line <= 0;
-        // Cuando window_triggered se apaga (entramos a H-BLANK) y la ventana sí se dibujó
         else if (window_triggered_last && !window_triggered) begin
             if (reg_win_en && v_count >= reg_wy && reg_wx <= 166)
                 window_line <= window_line + 1'b1;
@@ -311,11 +309,11 @@ module ppu(
     reg [7:0] current_tile_data_0;
     reg [7:0] current_tile_data_1;
     
-    // Data that will be pushed into pixel FIFO
+    // FIX PALETA: Lógica limpia para extraer Color 0 y 1 de la VRAM sin invertirlos
     reg [31:0] current_fetch_result;
     always@(*) begin
         for (i = 0; i < 8; i = i + 1) begin
-            current_fetch_result[i*4+3] = current_tile_data_1[i]; // ENDIANNESS ORIGINAL
+            current_fetch_result[i*4+3] = current_tile_data_1[i]; 
             current_fetch_result[i*4+2] = current_tile_data_0[i];
             current_fetch_result[i*4+1] = PPU_PAL_BG[1]; 
             current_fetch_result[i*4+0] = PPU_PAL_BG[0];
@@ -384,22 +382,19 @@ module ppu(
     reg [31:0] merge_result;
     always@(*) begin
         for (i = 0; i < 8; i = i + 1) begin
-            if (
-                    ((current_obj_tile_data_1[i] != 1'b0)||(current_obj_tile_data_0[i] != 1'b0))&&
-                    ( 
-                      // INYECCIÓN LÓGICA DE JAVA: Si el fondo está apagado, el Sprite SIEMPRE dibuja ignorando prioridad de BG
-                      (~reg_bg_disp) ||
-                      ( 
-                        ((pf_data[32+i*4+1] == PPU_PAL_BG[1])&&(pf_data[32+i*4+0] == PPU_PAL_BG[0]))&&
-                        (
-                            ((current_obj_to_bg_priority)&&(pf_data[32+i*4+3] == 1'b0)&&(pf_data[32+i*4+2] == 1'b0))|| 
-                            (~current_obj_to_bg_priority)
-                        )
-                      )
-                    )
-                )
+            // FIX PALETA OAM: Asegura que el pixel del sprite no sea transparente (00) y gane prioridad
+            if ( ((current_obj_tile_data_1[i] != 1'b0) || (current_obj_tile_data_0[i] != 1'b0)) &&
+                 (
+                   // Si el BG está apagado, el Sprite siempre se pinta
+                   (~reg_bg_disp) ||
+                   // O si la prioridad de Sprite gana sobre el BG
+                   (~current_obj_to_bg_priority) ||
+                   // O si el BG es color 00 (transparente)
+                   (pf_data[32+i*4+3] == 1'b0 && pf_data[32+i*4+2] == 1'b0)
+                 )
+               )
             begin 
-                merge_result[i*4+3] = current_obj_tile_data_1[i]; // ENDIANNESS ORIGINAL
+                merge_result[i*4+3] = current_obj_tile_data_1[i]; 
                 merge_result[i*4+2] = current_obj_tile_data_0[i];
                 merge_result[i*4+1] = current_obj_pal[1];
                 merge_result[i*4+0] = current_obj_pal[0];
@@ -602,7 +597,7 @@ module ppu(
                     valid <= 0;
                 end
                 else begin
-                    // FIX DV: Alineación perfecta desde el pixel 8 (X=0) al 167 (X=159)
+                    // FIX DV DRIFT: Alienación exacta desde el pixel 8
                     if (h_pix_output >= 8 && h_pix_output < 168)
                         valid <= 1;
                     else
