@@ -1,19 +1,6 @@
 `timescale 1ns / 1ps
 `default_nettype wire
 `include "common.v"
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: Wenting Zhang
-// 
-// Module Name:    control
-// Project Name:   VerilogBoy
-// Description: 
-//   The control unit of Game Boy CPU.
-// Dependencies: 
-// 
-// Additional Comments: 
-//   
-//////////////////////////////////////////////////////////////////////////////////
 
 module control(
     input        clk,
@@ -65,6 +52,7 @@ module control(
     reg ime_clear;
     reg ime_set;
     reg ime_delay_set;
+    
     // FF
     reg ime_delay_set_ff;
     reg ime;
@@ -73,6 +61,7 @@ module control(
     wire [7:0] opcode = opcode_early;
     wire [2:0] m_cycle = m_cycle_early;
 
+    // El famoso hack del FF para lograr el delay de 1 instrucción de EI
     always @(posedge clk)
         if (ct_state == 2'd2)
             ime_delay_set_ff <= ime_delay_set;
@@ -146,27 +135,24 @@ module control(
     reg       comb_halt;
     reg       comb_fault;
 
-    // All these nonsense will be replaced by a vector decoding ROM... 
-    // in the future
     always @(*) begin
         // Set default output
-        // ACC = ACC + 0
         comb_alu_src_a = `ALU_SRC_A_ACC;
         comb_alu_src_b = `ALU_SRC_B_ZERO;
         comb_alu_op_prefix = `ALU_OP_PREFIX_NORMAL;
         comb_alu_op_src = `ALU_OP_SRC_ADD_FTOR;
         comb_alu_dst = `ALU_DST_ACC;
         comb_pc_we = 0;
-        comb_rf_wr_sel = `RF_SEL_B; // Doesn't matter
-        comb_rf_rd_sel = `RF_SEL_B; // Doesn't matter
-        comb_bus_op = `BUS_OP_IF; // Fetch comb_next instruction
-        comb_db_src = `DB_SRC_DB; // Should != ACC
-        comb_ab_src = `AB_SRC_PC; // Output PC
-        comb_ct_op = `CT_OP_PC_INC; // PC = PC + 1
+        comb_rf_wr_sel = `RF_SEL_B;
+        comb_rf_rd_sel = `RF_SEL_B;
+        comb_bus_op = `BUS_OP_IF; 
+        comb_db_src = `DB_SRC_DB; 
+        comb_ab_src = `AB_SRC_PC; 
+        comb_ct_op = `CT_OP_PC_INC; 
         comb_flags_we = 0;
         comb_next = 0;
         comb_alu_src_xchg = 0;
-        comb_rf_rdw_sel = 2'b10; // Select HL
+        comb_rf_rdw_sel = 2'b10; 
         comb_pc_src = 2'b00;
         comb_pc_b_sel = m_cycle[0];
         comb_pc_jr = 1'b0;
@@ -183,39 +169,30 @@ module control(
         ime_clear = 1'b0;
         comb_int_ack = 1'b0;
         comb_flags_pattern = 2'b00;
-        // Though the idea behind the original GB is that when in comb_halt or comb_stop
-        // mode, the clock can be comb_stopped, thus lower the power consumption and
-        // save the battery. On FPGA, this is hard to achieve since clocking in
-        // FPGA works very differently than on ASIC. So here, when comb_halted, CPU
-        // would executing NOP in place as if it was comb_halted.
+
         if (halt_last || stop_last || fault_last) begin
             if (wake) begin
                 comb_halt = 1'b0;
                 comb_stop = 1'b0;
-                // Fault could not be waked up 
             end
             else begin
-                // Keep sleeping
                 comb_bus_op = `BUS_OP_IDLE;
                 comb_ct_op = `CT_OP_IDLE;
                 comb_halt = halt_last;
                 comb_stop = stop_last;
             end
-            // Fault cannot be waken up
             comb_fault = fault_last;
         end
         if (int_dispatch) begin
             // Interrupt dispatch process
             case (m_cycle)
             0: begin
-                // Revert PC
                 comb_pc_revert = 1'b1;
                 comb_bus_op = `BUS_OP_IDLE;
                 comb_ct_op = `CT_OP_SP_DEC;
                 comb_next = 1'b1;
             end
             1: begin
-                // Save PCh
                 comb_alu_src_a = `ALU_SRC_A_PC;
                 comb_alu_dst = `ALU_DST_DB;
                 comb_bus_op = `BUS_OP_WRITE;
@@ -225,7 +202,6 @@ module control(
                 comb_next = 1'b1;
             end
             2: begin
-                // Save PCl
                 comb_alu_src_a = `ALU_SRC_A_PC;
                 comb_alu_dst = `ALU_DST_DB;
                 comb_bus_op = `BUS_OP_WRITE;
@@ -254,11 +230,8 @@ module control(
             end
             endcase
         end
-        //else begin
-        // If waken up
         if (!comb_halt && !comb_stop && !comb_fault && !int_dispatch) begin
             if (opcode == 8'h00) begin // NOP
-                // Default behavior is enough
             end
             else if (opcode == 8'h10) begin // STOP
                 comb_stop = 1;
@@ -270,17 +243,16 @@ module control(
                 ime_clear = 1'b1;
             end
             else if (opcode == 8'hFB) begin // EI
-                // EI here need to be delayed for 1 clock?
                 ime_delay_set = 1'b1;
             end
             // 16-bit IMM to register LD instructions
             else if ((opcode[7:6] == 2'b00) && (opcode[3:0] == 4'b0001)) begin
-                comb_alu_src_a = `ALU_SRC_A_DB; // Load from databus
-                comb_alu_dst = `ALU_DST_REG; // Load to register
-                comb_db_src = `DB_SRC_DB; // DB destination to databus buffer
+                comb_alu_src_a = `ALU_SRC_A_DB;
+                comb_alu_dst = `ALU_DST_REG;
+                comb_db_src = `DB_SRC_DB;
                 if ((m_cycle == 0) || (m_cycle == 1)) begin
-                    comb_rf_wr_sel = {opcode[5:4], 1'b1}; // Register no based on opcode
-                    comb_bus_op = `BUS_OP_READ; // Read from databus
+                    comb_rf_wr_sel = {opcode[5:4], 1'b1};
+                    comb_bus_op = `BUS_OP_READ;
                     comb_next = 1;
                 end
                 else begin
@@ -314,25 +286,22 @@ module control(
                     comb_ct_op = `CT_OP_IDLE;
                     comb_next = 1'b1;
                 end
-                else begin
-                    // Default behaviour is enough.
-                end
             end
             // 8 bit reg-to-reg, mem-to-reg, or reg-to-mem LD instructions
             else if (opcode[7:6] == 2'b01) begin
                 if (opcode[2:0] == 3'b110)
-                    comb_alu_src_a = `ALU_SRC_A_DB; // Src A from data bus
+                    comb_alu_src_a = `ALU_SRC_A_DB;
                 else if (opcode[2:0] == 3'b111)
-                    comb_alu_src_a = `ALU_SRC_A_ACC; // Src A from accumulator
+                    comb_alu_src_a = `ALU_SRC_A_ACC;
                 else
-                    comb_alu_src_a = `ALU_SRC_A_REG; // Src A from register file
+                    comb_alu_src_a = `ALU_SRC_A_REG;
 
                 if (opcode[5:3] == 3'b110)
-                    comb_alu_dst = `ALU_DST_DB; // Destination is (HL)
+                    comb_alu_dst = `ALU_DST_DB;
                 else if (opcode[5:3] == 3'b111) 
-                    comb_alu_dst = `ALU_DST_ACC; // Destination is A
+                    comb_alu_dst = `ALU_DST_ACC;
                 else
-                    comb_alu_dst = `ALU_DST_REG; // Destination is register
+                    comb_alu_dst = `ALU_DST_REG;
                 
                 comb_rf_wr_sel = opcode[5:3];
                 comb_rf_rd_sel = opcode[2:0];
@@ -359,7 +328,6 @@ module control(
             // 8 bit imm-to-reg, imm-to-mem LD instructions
             else if ((opcode[7:6] == 2'b00) && (opcode[2:0] == 3'b110)) begin
                 comb_alu_src_a = `ALU_SRC_A_DB;
-                
                 if (opcode[5:3] == 3'b110) begin // imm to mem
                     comb_alu_dst = `ALU_DST_DB;
                     comb_rf_rd_sel = `RF_SEL_HL;
@@ -390,9 +358,9 @@ module control(
             else if ((opcode == 8'h02) || (opcode == 8'h12)) begin
                 comb_alu_dst = `ALU_DST_DB;
                 if (opcode == 8'h02)
-                    comb_rf_rdw_sel = 2'b00; // Select BC
+                    comb_rf_rdw_sel = 2'b00;
                 else
-                    comb_rf_rdw_sel = 2'b01; // Select DE
+                    comb_rf_rdw_sel = 2'b01;
                 if (m_cycle == 0) begin
                     comb_next = 1;
                     comb_bus_op = `BUS_OP_WRITE;
@@ -409,7 +377,6 @@ module control(
                 else
                     comb_alu_op_src = `ALU_OP_SRC_SUB_ATOF;
                 if (m_cycle == 0) begin
-                    // A being written to the memory, calculate L +/- 1
                     comb_alu_src_b = `ALU_SRC_B_ONE;
                     comb_rf_rd_sel = `RF_SEL_L;
                     comb_rf_wr_sel = `RF_SEL_L;
@@ -420,7 +387,6 @@ module control(
                     comb_next = 1;
                 end
                 else begin
-                    // calculate H +/- carry
                     comb_alu_src_b = `ALU_SRC_B_CARRY;
                     comb_rf_rd_sel = `RF_SEL_H;
                     comb_rf_wr_sel = `RF_SEL_H;
@@ -430,10 +396,10 @@ module control(
             else if ((opcode == 8'h0A) || (opcode == 8'h1A)) begin
                 comb_alu_src_a = `ALU_SRC_A_DB;
                 if (opcode == 8'h0A) begin
-                    comb_rf_rdw_sel = 2'b00; // Select BC
+                    comb_rf_rdw_sel = 2'b00;
                 end
                 else begin
-                    comb_rf_rdw_sel = 2'b01; // Select DE
+                    comb_rf_rdw_sel = 2'b01;
                 end
 
                 if (m_cycle == 0) begin
@@ -497,14 +463,12 @@ module control(
                 comb_flags_pattern = `FLAGS_ZNHx;
                 comb_flags_we = 1'b1;
 
-                // INC or DEC
                 if (opcode[0])
                     comb_alu_op_src = `ALU_OP_SRC_SUB_ATOF;
                 else
                     comb_alu_op_src = `ALU_OP_SRC_ADD_FTOR;
 
                 if (opcode[5:3] == 3'b110) begin
-                    // INC/DEC (HL)
                     comb_alu_src_a = `ALU_SRC_A_DB;
                     comb_alu_dst = `ALU_DST_DB;
                     if (m_cycle == 0) begin
@@ -521,12 +485,10 @@ module control(
                         comb_next = 1;
                     end
                     else begin
-                        // End cycle
                         comb_flags_we = 0;
                     end
                 end
                 else if (opcode[5:3] == 3'b111) begin
-                    // INC/DEC A
                     comb_alu_src_a = `ALU_SRC_A_ACC;
                     comb_alu_dst = `ALU_DST_ACC;
                 end
@@ -566,22 +528,20 @@ module control(
                 comb_rf_rd_sel = opcode[2:0];
                 comb_flags_we = 1'b1;
                 if ((opcode[5:4] == 2'b01) || (opcode[5:3] == 3'b111)) begin
-                    // Sub or CP
                     comb_alu_src_xchg = 1'b1;
                 end
-                if (opcode[2:0] == 3'b110) begin // Source from HL
+                if (opcode[2:0] == 3'b110) begin
                     comb_alu_src_a = `ALU_SRC_A_DB;
                     if (m_cycle == 0) begin 
                         comb_bus_op = `BUS_OP_READ;
                         comb_ab_src = `AB_SRC_REG;
-                        // Do not writeback in the first cycle
                         comb_alu_dst = `ALU_DST_DB;
                         comb_flags_we = 1'b0;
                         comb_ct_op = `CT_OP_IDLE;
                         comb_next = 1;
                     end
                 end
-                else if (opcode[2:0] == 3'b111) begin // Source from A
+                else if (opcode[2:0] == 3'b111) begin
                     comb_alu_src_a = `ALU_SRC_A_ACC;
                 end
                 else begin
@@ -596,7 +556,6 @@ module control(
                 end
                 else begin
                     if ((opcode[5:4] == 2'b01) || (opcode[5:3] == 3'b111)) begin
-                        // Sub or CP
                         comb_alu_src_xchg = 1'b1;
                     end
                     comb_alu_src_a = `ALU_SRC_A_DB;
@@ -608,7 +567,6 @@ module control(
             // 16-bit PUSH
             else if ((opcode[7:6] == 2'b11) && (opcode[3:0] == 4'b0101)) begin
                 if (opcode[5:4] == 2'b11) begin
-                    // AF
                     comb_alu_op_prefix = `ALU_OP_PREFIX_SPECIAL;
                     comb_db_src = `DB_SRC_ACC;
                 end
@@ -672,7 +630,6 @@ module control(
                 else if (m_cycle == 2) begin
                     comb_rf_wr_sel = {opcode[5:4], 1'b0};
                     if (opcode[5:4] == 2'b11) begin
-                        // Copy from memory to flags
                         comb_alu_op_prefix = `ALU_OP_PREFIX_SPECIAL;
                         comb_alu_op_src = `ALU_OP_SRC_SUB_ATOF;
                         comb_alu_src_b = `ALU_SRC_B_ACC;
@@ -864,7 +821,6 @@ module control(
             else if ((opcode == 8'hC3) || (opcode == 8'hC2) || (opcode == 8'hD2)
                     || (opcode == 8'hCA) || (opcode == 8'hDA)) begin
                 if ((m_cycle == 0) || (m_cycle == 1)) begin
-                    // Read 16 bit imm
                     comb_bus_op = `BUS_OP_READ;
                     comb_db_src = `DB_SRC_DB;
                     comb_next = 1;
@@ -875,21 +831,19 @@ module control(
                         ((opcode == 8'hC3)) ||               // JP
                         ((opcode == 8'hCA) && (f_z)) ||      // JP Z
                         ((opcode == 8'hDA) && (f_c))) begin  // JP C
-                        // Branch taken
+                        
                         comb_pc_src = `PC_SRC_TEMP;
                         comb_bus_op = `BUS_OP_IDLE;
                         comb_ct_op = `CT_OP_IDLE;
                         comb_pc_we = 1;
                         comb_next = 1;
                     end
-                    // Branch not taken
                 end
             end
             // CALL CC, a16
             else if ((opcode == 8'hCD) || (opcode == 8'hCC) || (opcode == 8'hDC)
                     || (opcode == 8'hC4) || (opcode == 8'hD4)) begin
                 if ((m_cycle == 0) || (m_cycle == 1)) begin
-                    // Read 16 bit imm
                     comb_bus_op = `BUS_OP_READ;
                     comb_db_src = `DB_SRC_DB;
                     comb_next = 1;
@@ -900,7 +854,7 @@ module control(
                         ((opcode == 8'hCD)) ||               // CALL
                         ((opcode == 8'hCC) && (f_z)) ||      // CALL Z
                         ((opcode == 8'hDC) && (f_c))) begin  // CALL C
-                        // Call taken
+                        
                         comb_bus_op = `BUS_OP_IDLE;
                         comb_ct_op = `CT_OP_SP_DEC;
                         comb_next = 1;

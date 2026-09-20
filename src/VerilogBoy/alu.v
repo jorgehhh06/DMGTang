@@ -55,11 +55,14 @@ module alu(
     assign bit_index = alu_bit_index;
 
     // -- Registros auxiliares para DAA --
-    
+    reg [7:0] u_daa;
+    reg fc;
 
     // -- Lógica combinacional --
     always@(*) begin
         // Todo se pone en 0
+        u_daa = 8'b0;
+        fc = 1'b0;
         alu_flags_out = 4'h0;
         carry = 1'b0;
         result_low = 5'd0;
@@ -131,7 +134,29 @@ module alu(
                 alu_flags_out[F_C] = 1'b0;
             end
             OP_DAA: begin
+                // Primera condición (Nibble bajo)
+                if (alu_flags_in[F_H] || (~alu_flags_in[F_N] && alu_a[3:0] > 4'd9)) begin
+                    u_daa = 8'd6;
+                end
                 
+                // Segunda condición (Nibble alto / Valor completo)
+                if (alu_flags_in[F_C] || (~alu_flags_in[F_N] && alu_a > 8'h99)) begin
+                    u_daa = u_daa | 8'h60; // Verilog clásico: A = A | B
+                    fc = 1'b1;
+                end
+                
+                // Operación aritmética usando el bus de salida alu_result
+                if (alu_flags_in[F_N] == 1'b1) begin
+                    alu_result = alu_a - u_daa; // Si la última instrucción fue una resta
+                end else begin
+                    alu_result = alu_a + u_daa; // Si la última instrucción fue una suma
+                end
+                
+                // Actualización de flags (Evaluamos alu_result)
+                alu_flags_out[F_Z] = (alu_result == 8'd0) ? 1'b1 : 1'b0;
+                alu_flags_out[F_N] = alu_flags_in[F_N];
+                alu_flags_out[F_H] = 1'b0;
+                alu_flags_out[F_C] = fc;
             end
             OP_CPL: begin
                 // Operador a nivel de bits ~

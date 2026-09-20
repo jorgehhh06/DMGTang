@@ -1,11 +1,5 @@
 `timescale 1ns / 1ps
 `default_nettype wire
-////////////////////////////////////////////////////////////////////////////////
-// Module Name:    cpu
-// Project Name:   VerilogBoy
-// Description: 
-//   The Game Boy CPU.
-////////////////////////////////////////////////////////////////////////////////
 
 module cpu(
     input clk,
@@ -51,14 +45,13 @@ module cpu(
     wire        stop;
     wire        halt;
     reg         wake;
-    //wire        fault;
     reg         int_dispatch;
     wire        int_master_en;
     wire        int_ack;
 
     wire [2:0]  rf_rdn;
     wire [7:0]  rf_rd;
-    reg  [7:0]  rf_rd_ex; // Buffer Rd selected during EX stage
+    reg  [7:0]  rf_rd_ex; 
     wire [1:0]  rf_rdwn;
     wire [15:0] rf_rdw;
     wire [7:0]  rf_h;
@@ -86,19 +79,19 @@ module cpu(
 
     wire [15:0] pc_rd;
     wire [7:0]  pc_rd_b;
-    wire        pc_b_sel; // byte select
+    wire        pc_b_sel; 
     wire [15:0] pc_wr;
     wire [7:0]  pc_wr_b;
     wire        pc_we_h;
     wire        pc_we_l;
 
-    wire [15:0] temp_rd; // temp value for 16bit imm
+    wire [15:0] temp_rd; 
 
     wire [3:0]  flags_rd;
     wire [3:0]  flags_wr;
         
-    wire [7:0]  db_wr; // Data into buffer
-    wire [7:0]  db_rd; // Data out from buffer
+    wire [7:0]  db_wr; 
+    wire [7:0]  db_rd; 
     wire        db_we;
 
     wire [7:0]  imm_abs;
@@ -172,11 +165,12 @@ module cpu(
         done <= stop | halt | fault; 
     end
 
+    // RESTAURACIÓN DEL WAKE DELAY DE VERILOGBOY
     wire wake_comb = 
         (halt) ? ((int_flags_in & int_en) != 0) : (
         (stop) ? (((int_flags_in & int_en) != 0) || (key_in != 0)) : 
         (1'b0));
-    reg wake_delay; 
+    reg wake_delay; // Wake should be delayed for 1 Mcycle
     always @(posedge clk) begin
         if (ct_state == 2'b10) begin
             wake_delay <= wake_comb;
@@ -282,8 +276,8 @@ module cpu(
                 halt_bug <= 1'b1;
             end
             
-            // Apagar HALT BUG en el momento que se intenta incrementar el PC (bloqueado por halt_bug)
-            if (halt_bug && ct_state == 2'b01 && ct_op == 2'b01) begin
+            // Apagar HALT BUG al terminar COMPLETO el ciclo de fetch (ct_state == 3)
+            if (halt_bug && ct_state == 2'b11) begin
                 halt_bug <= 1'b0;
             end
         end
@@ -355,7 +349,6 @@ module cpu(
         else if (flags_we) begin
             if (is_sp_add) begin
                 // Banderas Matemáticas Exactas de Java para ADD SP, e8 (0xE8) y LD HL, SP+e8 (0xF8)
-                // Usamos sp_orig para que el cálculo no se corrompa si rf_sp ya se actualizó a la mitad
                 flags[3] <= 1'b0; // Z
                 flags[2] <= 1'b0; // N
                 flags[1] <= (({1'b0, sp_orig[3:0]} + {1'b0, imm_low[3:0]}) > 5'h0F) ? 1'b1 : 1'b0; // H
@@ -389,7 +382,6 @@ module cpu(
         .alu_flags_in(alu_flags_in),
         .alu_flags_out(alu_flags_out),
         .alu_op(alu_op),
-        // FIX FATAL DE SINTAXIS: Se retiró is_sp_add que causaba el fallo de compilación
         .is_fast_rot(is_fast_rot) 
     );
 

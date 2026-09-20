@@ -260,26 +260,37 @@ module ppu(
     wire [2:0] h_extra = reg_scx[2:0]; 
     reg [7:0] h_pix_render; 
     reg [7:0] h_pix_output; 
-    wire [7:0] h_pix_obj = h_pix_output + 1'b1; 
+    
+    // FIX DV: Alineación perfecta de Sprites con Pantalla (sin el +1)
+    wire [7:0] h_pix_obj = h_pix_output; 
     wire [7:0] v_pix = v_count;
     
     reg window_triggered; 
     wire render_window_or_bg = window_triggered;
-    wire window_trigger = (((h_pix_output) == (reg_wx))&&(v_pix >= reg_wy)&&(reg_win_en)&&(~window_triggered)) ? 1 : 0;
     
-    // INYECCIÓN DE LÓGICA DE JAVA: Contador correcto de líneas de ventana
+    // FIX DV: Offset de WX para no activar la ventana muy temprano
+    wire window_trigger = (((h_pix_output) == (reg_wx + 1'b1))&&(v_pix >= reg_wy)&&(reg_win_en)&&(~window_triggered)) ? 1 : 0;
+    
+    // FIX DV: Máquina de estados infalible para contar líneas de ventana
     reg [7:0] window_line;
+    reg window_triggered_last;
+
     always @(posedge clk) begin
-        if (rst || !reg_lcd_en) window_line <= 0;
-        else if (h_count == PPU_H_TOTAL - 1) begin
-            if (v_count == 153) window_line <= 0;
-            else if (reg_win_en && v_count >= reg_wy && reg_wx <= 166 && window_triggered) 
+        window_triggered_last <= window_triggered;
+    end
+
+    always @(posedge clk) begin
+        if (rst || !reg_lcd_en || v_count >= 144) 
+            window_line <= 0;
+        // Cuando window_triggered se apaga (entramos a H-BLANK) y la ventana sí se dibujó
+        else if (window_triggered_last && !window_triggered) begin
+            if (reg_win_en && v_count >= reg_wy && reg_wx <= 166)
                 window_line <= window_line + 1'b1;
         end
     end
 
     wire [7:0] v_pix_in_map = v_pix + reg_scy;
-    wire [7:0] v_pix_in_win = window_line; // FIX DE VENTANA
+    wire [7:0] v_pix_in_win = window_line;
 
     wire [2:0] line_to_tile_v_offset_bg = v_pix_in_map[2:0]; 
     wire [4:0] line_in_tile_v_bg = v_pix_in_map[7:3]; 
@@ -302,9 +313,9 @@ module ppu(
     
     // Data that will be pushed into pixel FIFO
     reg [31:0] current_fetch_result;
-    always@(current_tile_data_1, current_tile_data_0) begin
+    always@(*) begin
         for (i = 0; i < 8; i = i + 1) begin
-            current_fetch_result[i*4+3] = current_tile_data_1[i]; // ENDIANNESS ORIGINAL (NO VOLTEADO)
+            current_fetch_result[i*4+3] = current_tile_data_1[i]; // ENDIANNESS ORIGINAL
             current_fetch_result[i*4+2] = current_tile_data_0[i];
             current_fetch_result[i*4+1] = PPU_PAL_BG[1]; 
             current_fetch_result[i*4+0] = PPU_PAL_BG[0];
@@ -330,7 +341,7 @@ module ppu(
     
     reg [3:0] obj_trigger_id_from[0:10];
     reg [3:0] obj_trigger_id_next;
-    always@(h_pix_obj, obj_trigger_id) begin
+    always@(*) begin
         obj_trigger_id_from[10] = OBJ_TRIGGER_NOT_FOUND; 
         for (i = 9; i >= 0; i = i - 1) begin
             /* verilator lint_off WIDTH */
@@ -388,7 +399,7 @@ module ppu(
                     )
                 )
             begin 
-                merge_result[i*4+3] = current_obj_tile_data_1[i]; // ENDIANNESS ORIGINAL (NO VOLTEADO)
+                merge_result[i*4+3] = current_obj_tile_data_1[i]; // ENDIANNESS ORIGINAL
                 merge_result[i*4+2] = current_obj_tile_data_0[i];
                 merge_result[i*4+1] = current_obj_pal[1];
                 merge_result[i*4+0] = current_obj_pal[0];
@@ -526,7 +537,7 @@ module ppu(
     end
     
     reg [31:0] half_merge_result;
-    always @(current_fetch_result, pf_data) begin
+    always @(*) begin
         for (i = 0; i < 8; i = i + 1) begin
             if ((pf_data[32+i*4+1] == PPU_PAL_BG[1])&&(pf_data[32+i*4+0] == PPU_PAL_BG[0])) begin
                 half_merge_result[i*4+3] = current_fetch_result[i*4+3];
@@ -591,7 +602,8 @@ module ppu(
                     valid <= 0;
                 end
                 else begin
-                    if (h_pix_output >= 7 && h_pix_output < 167)
+                    // FIX DV: Alineación perfecta desde el pixel 8 (X=0) al 167 (X=159)
+                    if (h_pix_output >= 8 && h_pix_output < 168)
                         valid <= 1;
                     else
                         valid <= 0;
