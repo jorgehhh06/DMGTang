@@ -7,9 +7,8 @@ module alu(
     output reg [7:0] alu_result,
     input [3:0] alu_flags_in,
     output reg [3:0] alu_flags_out,
-    input [4:0] alu_op,
-    input is_fast_rot // Flag para detectar rotaciones rápidas
-    );
+    input [4:0] alu_op
+);
 
     // -- Códigos de operaciones (bits de control) --
     localparam OP_ADD = 5'b00000; // ADD
