@@ -37,7 +37,6 @@ module mbc5(
     assign rom_a[22:14] = rom_addr_lo ? 9'b0 : rom_bank[8:0];
     assign ram_a[16:13] = ram_bank[3:0];
     
-    // FIX: Lógica 100% síncrona sin edge-detectors basura
     always@(posedge vb_clk or posedge vb_rst)
     begin
         if (vb_rst) begin

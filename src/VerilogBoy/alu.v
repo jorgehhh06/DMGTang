@@ -152,7 +152,7 @@ module alu(
                     alu_result = alu_a + u_daa; // Si la última instrucción fue una suma
                 end
                 
-                // Actualización de flags (Evaluamos alu_result)
+                // Actualización de flags
                 alu_flags_out[F_Z] = (alu_result == 8'd0) ? 1'b1 : 1'b0;
                 alu_flags_out[F_N] = alu_flags_in[F_N];
                 alu_flags_out[F_H] = 1'b0;

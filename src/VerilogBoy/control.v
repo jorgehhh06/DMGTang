@@ -135,6 +135,7 @@ module control(
     reg       comb_halt;
     reg       comb_fault;
 
+    // -- Decodificador de instrucciones --
     always @(*) begin
         // Set default output
         comb_alu_src_a = `ALU_SRC_A_ACC;
