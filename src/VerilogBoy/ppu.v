@@ -261,15 +261,16 @@ module ppu(
     reg [7:0] h_pix_output; 
     
     // FIX DV DRIFT: Alienación exacta Sprite-Pantalla
-    wire [7:0] h_pix_obj = h_pix_output; 
+    wire [7:0] h_pix_obj = h_pix_output + 8'd1; 
     wire [7:0] v_pix = v_count;
     
     reg window_triggered; 
     wire render_window_or_bg = window_triggered;
     
-    // FIX DV WINDOW: Detonador condicional exacto
-    wire window_trigger = (((h_pix_output) == (reg_wx + 1'b1))&&(v_pix >= reg_wy)&&(reg_win_en)&&(~window_triggered)) ? 1 : 0;
-    
+    // FIX DV WINDOW DRIFT: Disparador adelantado 1 ciclo para compensar la FSM
+    // Evita que el fondo (con su propio SCY) sangre hacia el borde de la ventana
+    wire window_trigger = (((h_pix_output) == (reg_wx))&&(v_pix >= reg_wy)&&(reg_win_en)&&(~window_triggered)) ? 1 : 0;
+
     // FIX DV WINDOW: Máquina de estados infalible para el contador Y de la ventana
     reg [7:0] window_line;
     reg window_triggered_last;
