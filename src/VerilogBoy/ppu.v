@@ -268,7 +268,6 @@ module ppu(
     wire render_window_or_bg = window_triggered;
     
     // FIX DV WINDOW DRIFT: Disparador adelantado 1 ciclo para compensar la FSM
-    // Evita que el fondo (con su propio SCY) sangre hacia el borde de la ventana
     wire window_trigger = (((h_pix_output) == (reg_wx))&&(v_pix >= reg_wy)&&(reg_win_en)&&(~window_triggered)) ? 1 : 0;
 
     // FIX DV WINDOW: Máquina de estados infalible para el contador Y de la ventana
@@ -383,14 +382,12 @@ module ppu(
     reg [31:0] merge_result;
     always@(*) begin
         for (i = 0; i < 8; i = i + 1) begin
-            // FIX PALETA OAM: Asegura que el pixel del sprite no sea transparente (00) y gane prioridad
+            // FIX BUG OAM: Evitamos pisar un sprite ganador si el FIFO ya tiene un pixel de OBJ.
             if ( ((current_obj_tile_data_1[i] != 1'b0) || (current_obj_tile_data_0[i] != 1'b0)) &&
+                 (pf_data[32+i*4+1] == PPU_PAL_BG[1] && pf_data[32+i*4+0] == PPU_PAL_BG[0]) &&
                  (
-                   // Si el BG está apagado, el Sprite siempre se pinta
                    (~reg_bg_disp) ||
-                   // O si la prioridad de Sprite gana sobre el BG
                    (~current_obj_to_bg_priority) ||
-                   // O si el BG es color 00 (transparente)
                    (pf_data[32+i*4+3] == 1'b0 && pf_data[32+i*4+2] == 1'b0)
                  )
                )
@@ -475,9 +472,9 @@ module ppu(
                 oam_rd_addr_int <= oam_search_count * 4;
             end
             S_OAMY: begin
+                // FIX BUG OAM: Ya no se ignora oam_search_x == 0, cuenta para el límite de 10 sprites
                 if ((oam_search_y <= obj_h_upper_boundary)&&
                     (oam_search_y >  obj_h_lower_boundary)&&
-                    (oam_search_x != 8'd0)&&
                     (oam_visible_count < 4'd10)) begin
                     obj_visible_list[oam_visible_count] <= oam_search_count;
                     obj_trigger_list[oam_visible_count] <= oam_search_x;
