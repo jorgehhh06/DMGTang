@@ -66,7 +66,8 @@ module dma(
                         end
                         
                         2'b01: begin // Tick 1: Esperar la latencia de la Block RAM
-                            dma_rd <= 1'b0; 
+                            // FIX DMA: Mantener el cable de lectura arriba o el bus te soltará basura
+                            dma_rd <= 1'b1; 
                             // No hacemos NADA. Dejamos que la RAM escupa el dato.
                         end
                         
@@ -74,10 +75,13 @@ module dma(
                             dma_dout <= dma_din; // ¡Ahora sí el dato es válido!
                             dma_a    <= 16'hFE00 + {8'h00, current_byte};
                             dma_wr   <= 1'b1;
+                            // Aún mantenemos dma_rd = 1 por estabilidad de señales en la FPGA
+                            dma_rd   <= 1'b1; 
                         end
                         
                         2'b11: begin // Tick 3: Apagar escritura y evaluar fin
                             dma_wr <= 1'b0;
+                            dma_rd <= 1'b0;
                             
                             if (current_byte == 8'h9F) begin
                                 active <= 1'b0; // Ya copiamos los 160 bytes

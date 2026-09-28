@@ -157,24 +157,32 @@ module ppu(
     assign vram_dout = (vram_access_ext) ? (vram_data_out) : (8'hFF);
     
     // Pixel Pipeline
-    reg [63:0] pf_data; // Pixel FIFO Data
-    wire [1:0] pf_output_pixel;
-    wire [7:0] pf_output_palette;
-    wire [1:0] pf_output_pixel_id;
-    wire [1:0] pf_output_palette_id;
-    assign {pf_output_pixel_id, pf_output_palette_id} = pf_data[63:60];
+    reg [63:0] pf_data; 
+    // Bit 3: Paleta OBJ (0 = OB0, 1 = OB1). Ignorado para BG.
+    // Bit 2: Es OBJ (1 = Sprite, 0 = BG/Win).
+    // Bits 1-0: Color ID
     
-    assign pf_output_palette = (pf_output_palette_id == PPU_PAL_BG)  ? (reg_bgp)  :
-                               (pf_output_palette_id == PPU_PAL_OB0) ? (reg_obp0) :
-                               (pf_output_palette_id == PPU_PAL_OB1) ? (reg_obp1) : (8'hFF);
+    wire [1:0] current_pf_color_id = pf_data[61:60];
+    wire       current_pf_is_obj   = pf_data[62];
+    wire       current_pf_pal_id   = pf_data[63]; 
+    
+    wire [1:0] pal_bg_color = (current_pf_color_id == 2'b11) ? reg_bgp[7:6] :
+                              (current_pf_color_id == 2'b10) ? reg_bgp[5:4] :
+                              (current_pf_color_id == 2'b01) ? reg_bgp[3:2] : reg_bgp[1:0];
+                              
+    wire [1:0] pal_ob0_color = (current_pf_color_id == 2'b11) ? reg_obp0[7:6] :
+                               (current_pf_color_id == 2'b10) ? reg_obp0[5:4] :
+                               (current_pf_color_id == 2'b01) ? reg_obp0[3:2] : reg_obp0[1:0];
                                
-    // FIX PPU BACKGROUND OFF: Si el BG está apagado, escupe color 00 (blanco puro) siempre
-    wire [1:0] real_pixel_id = (!reg_bg_disp && pf_output_palette_id == PPU_PAL_BG) ? 2'b00 : pf_output_pixel_id;
-    
-    assign pf_output_pixel = (real_pixel_id == 2'b11) ? (pf_output_palette[7:6]) :
-                             (real_pixel_id == 2'b10) ? (pf_output_palette[5:4]) :
-                             (real_pixel_id == 2'b01) ? (pf_output_palette[3:2]) :
-                             (real_pixel_id == 2'b00) ? (pf_output_palette[1:0]) : (2'b00);
+    wire [1:0] pal_ob1_color = (current_pf_color_id == 2'b11) ? reg_obp1[7:6] :
+                               (current_pf_color_id == 2'b10) ? reg_obp1[5:4] :
+                               (current_pf_color_id == 2'b01) ? reg_obp1[3:2] : reg_obp1[1:0];
+
+    // FIX PRIORIDAD: La prioridad real se resuelve al inyectar al FIFO. 
+    // En la salida solo extraemos el color de su paleta correcta. Si BG off, escupe blanco puro.
+    wire [1:0] pf_output_pixel = (current_pf_is_obj) ? 
+                                 (current_pf_pal_id ? pal_ob1_color : pal_ob0_color) : 
+                                 ((reg_bg_disp) ? pal_bg_color : 2'b00);
 
     reg [2:0] pf_empty; 
     localparam PF_INITA = 3'd5; 
@@ -208,6 +216,13 @@ module ppu(
             h_count <= 0;
             hs <= 0;
             v_count <= 0;
+            vs <= 0;
+        end
+        else if (!reg_lcd_en) begin
+            // FIX CRASH SML2: Forzar contadores y V-SYNC/H-SYNC a 0 en apagado de LCD
+            h_count <= 0;
+            v_count <= 0;
+            hs <= 0;
             vs <= 0;
         end
         else begin
@@ -260,17 +275,14 @@ module ppu(
     reg [7:0] h_pix_render; 
     reg [7:0] h_pix_output; 
     
-    // FIX DV DRIFT: Alienación exacta Sprite-Pantalla
     wire [7:0] h_pix_obj = h_pix_output + 8'd1; 
     wire [7:0] v_pix = v_count;
     
     reg window_triggered; 
     wire render_window_or_bg = window_triggered;
     
-    // FIX DV WINDOW DRIFT: Disparador adelantado 1 ciclo para compensar la FSM
     wire window_trigger = (((h_pix_output) == (reg_wx))&&(v_pix >= reg_wy)&&(reg_win_en)&&(~window_triggered)) ? 1 : 0;
 
-    // FIX DV WINDOW: Máquina de estados infalible para el contador Y de la ventana
     reg [7:0] window_line;
     reg window_triggered_last;
 
@@ -309,14 +321,14 @@ module ppu(
     reg [7:0] current_tile_data_0;
     reg [7:0] current_tile_data_1;
     
-    // FIX PALETA: Lógica limpia para extraer Color 0 y 1 de la VRAM sin invertirlos
+    // FIX PALETA BG: Etiquetamos limpiamente los datos de BG/Win para el FIFO
     reg [31:0] current_fetch_result;
     always@(*) begin
         for (i = 0; i < 8; i = i + 1) begin
-            current_fetch_result[i*4+3] = current_tile_data_1[i]; 
-            current_fetch_result[i*4+2] = current_tile_data_0[i];
-            current_fetch_result[i*4+1] = PPU_PAL_BG[1]; 
-            current_fetch_result[i*4+0] = PPU_PAL_BG[0];
+            current_fetch_result[i*4+3] = 1'b0; // Ignorado
+            current_fetch_result[i*4+2] = 1'b0; // Es BG (No OBJ)
+            current_fetch_result[i*4+1] = current_tile_data_1[i]; 
+            current_fetch_result[i*4+0] = current_tile_data_0[i];
         end
     end
     
@@ -364,7 +376,7 @@ module ppu(
     wire current_obj_y_flip = current_obj_flags[6];
     wire current_obj_x_flip = current_obj_flags[5];
     wire current_obj_pal_id = current_obj_flags[4];
-    wire [1:0] current_obj_pal= (current_obj_pal_id) ? (PPU_PAL_OB1) : (PPU_PAL_OB0);
+    wire [1:0] current_obj_pal = (current_obj_pal_id) ? (PPU_PAL_OB1) : (PPU_PAL_OB0);
     
     /* verilator lint_off WIDTH */
     wire [3:0] line_to_obj_v_offset_raw = (v_pix + 8'd16 - current_obj_y); 
@@ -379,25 +391,40 @@ module ppu(
     reg [7:0] current_obj_tile_data_0;
     reg [7:0] current_obj_tile_data_1;
     
+    // FIX PRIORIDAD: Decidimos si el Sprite sobrevive contra el Fondo justo al meterlo al FIFO
     reg [31:0] merge_result;
     always@(*) begin
         for (i = 0; i < 8; i = i + 1) begin
-            // FIX BUG OAM: Evitamos pisar un sprite ganador si el FIFO ya tiene un pixel de OBJ.
-            if ( ((current_obj_tile_data_1[i] != 1'b0) || (current_obj_tile_data_0[i] != 1'b0)) &&
-                 (pf_data[32+i*4+1] == PPU_PAL_BG[1] && pf_data[32+i*4+0] == PPU_PAL_BG[0]) &&
-                 (
-                   (~reg_bg_disp) ||
-                   (~current_obj_to_bg_priority) ||
-                   (pf_data[32+i*4+3] == 1'b0 && pf_data[32+i*4+2] == 1'b0)
-                 )
-               )
-            begin 
-                merge_result[i*4+3] = current_obj_tile_data_1[i]; 
-                merge_result[i*4+2] = current_obj_tile_data_0[i];
-                merge_result[i*4+1] = current_obj_pal[1];
-                merge_result[i*4+0] = current_obj_pal[0];
+            // 1. Verificamos si el Sprite intenta dibujar algo (no es transparente)
+            if ((current_obj_tile_data_1[i] != 1'b0) || (current_obj_tile_data_0[i] != 1'b0)) begin
+                // 2. Verificamos si la ranura del FIFO está libre de otro Sprite
+                if (pf_data[32+i*4+2] == 1'b0) begin
+                    // 3. Evaluamos la prioridad contra el Fondo que ya está en el FIFO
+                    if ((~reg_bg_disp) || 
+                        (~current_obj_to_bg_priority) || 
+                        (pf_data[32+i*4+1] == 1'b0 && pf_data[32+i*4+0] == 1'b0)) 
+                    begin 
+                        merge_result[i*4+3] = current_obj_pal_id; // Bit 3: Paleta
+                        merge_result[i*4+2] = 1'b1;               // Bit 2: Es OBJ
+                        merge_result[i*4+1] = current_obj_tile_data_1[i];
+                        merge_result[i*4+0] = current_obj_tile_data_0[i];
+                    end else begin
+                        // Perdió contra el fondo
+                        merge_result[i*4+3] = pf_data[32+i*4+3];
+                        merge_result[i*4+2] = pf_data[32+i*4+2];
+                        merge_result[i*4+1] = pf_data[32+i*4+1];
+                        merge_result[i*4+0] = pf_data[32+i*4+0];
+                    end
+                end else begin
+                    // Ya había un Sprite con mayor prioridad posicional
+                    merge_result[i*4+3] = pf_data[32+i*4+3];
+                    merge_result[i*4+2] = pf_data[32+i*4+2];
+                    merge_result[i*4+1] = pf_data[32+i*4+1];
+                    merge_result[i*4+0] = pf_data[32+i*4+0];
+                end
             end
             else begin
+                // Píxel de Sprite transparente
                 merge_result[i*4+3] = pf_data[32+i*4+3];
                 merge_result[i*4+2] = pf_data[32+i*4+2];
                 merge_result[i*4+1] = pf_data[32+i*4+1];
@@ -415,34 +442,24 @@ module ppu(
     reg [4:0] r_next_state;
     wire is_in_v_blank = ((v_count >= PPU_V_ACTIVE) && (v_count < PPU_V_ACTIVE + PPU_V_BLANK));
     
-    // Current mode logic, based on current state
+    // FIX CRASH: FSM Blindada contra apagado de LCD
     always @ (posedge clk)
     begin
         if (rst) begin
+            reg_stat[1:0] <= PPU_MODE_V_BLANK;
+        end
+        else if (!reg_lcd_en) begin
             reg_stat[1:0] <= PPU_MODE_V_BLANK;
         end
         else begin
             case (r_state)
             S_IDLE: reg_stat[1:0] <= (reg_lcd_en) ? (PPU_MODE_V_BLANK) : (PPU_MODE_H_BLANK);
             S_BLANK: reg_stat[1:0] <= (is_in_v_blank) ? (PPU_MODE_V_BLANK) : (PPU_MODE_H_BLANK);
-            S_OAMX: reg_stat[1:0] <= PPU_MODE_OAM_SEARCH;
-            S_OAMY: reg_stat[1:0] <= PPU_MODE_OAM_SEARCH;
-            S_FTIDA: reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
-            S_FTIDB: reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
-            S_FRD0A: reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
-            S_FRD0B: reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
-            S_FRD1A: reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
-            S_FRD1B: reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
-            S_FWAITA: reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
-            S_FWAITB: reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
-            S_SWW: reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
-            S_OAMRDA: reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
-            S_OAMRDB: reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
-            S_OFRD0A: reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
-            S_OFRD0B: reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
-            S_OFRD1A: reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
-            S_OFRD1B: reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
-            S_OWB: reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
+            S_OAMX, S_OAMY: reg_stat[1:0] <= PPU_MODE_OAM_SEARCH;
+            S_FTIDA, S_FTIDB, S_FRD0A, S_FRD0B, S_FRD1A, S_FRD1B, 
+            S_FWAITA, S_FWAITB, S_SWW, S_OAMRDA, S_OAMRDB, 
+            S_OFRD0A, S_OFRD0B, S_OFRD1A, S_OFRD1B, S_OWB: 
+                reg_stat[1:0] <= PPU_MODE_PIX_TRANS;
             default: reg_stat[1:0] <= PPU_MODE_V_BLANK;
             endcase
         end
@@ -451,10 +468,12 @@ module ppu(
     assign oam_search_y = oam_data_out[7:0];
     assign oam_search_x = oam_data_out[15:8];
 
+    wire [7:0] actual_ly = (v_count == 8'd153 && h_count >= 9'd4) ? 8'd0 : v_count[7:0];
+
     // Render logic
     always @(posedge clk)
     begin
-        reg_ly <= v_pix[7:0];
+        reg_ly <= actual_ly;
         
         case (r_state)
             S_IDLE: begin end
@@ -472,7 +491,6 @@ module ppu(
                 oam_rd_addr_int <= oam_search_count * 4;
             end
             S_OAMY: begin
-                // FIX BUG OAM: Ya no se ignora oam_search_x == 0, cuenta para el límite de 10 sprites
                 if ((oam_search_y <= obj_h_upper_boundary)&&
                     (oam_search_y >  obj_h_lower_boundary)&&
                     (oam_visible_count < 4'd10)) begin
@@ -532,7 +550,7 @@ module ppu(
     reg [31:0] half_merge_result;
     always @(*) begin
         for (i = 0; i < 8; i = i + 1) begin
-            if ((pf_data[32+i*4+1] == PPU_PAL_BG[1])&&(pf_data[32+i*4+0] == PPU_PAL_BG[0])) begin
+            if ((pf_data[32+i*4+2] == 1'b0)) begin // Si no hay OBJ, el Fondo asume su lugar
                 half_merge_result[i*4+3] = current_fetch_result[i*4+3];
                 half_merge_result[i*4+2] = current_fetch_result[i*4+2];
                 half_merge_result[i*4+1] = current_fetch_result[i*4+1];
@@ -595,7 +613,6 @@ module ppu(
                     valid <= 0;
                 end
                 else begin
-                    // FIX DV DRIFT: Alienación exacta desde el pixel 8
                     if (h_pix_output >= 8 && h_pix_output < 168)
                         valid <= 1;
                     else
@@ -697,35 +714,48 @@ module ppu(
         endcase
     end
     
+    // ====================================================================
+    // LÓGICA HARDWARE DE INTERRUPCIONES STAT (FIX PARA DKL)
+    // ====================================================================
+    wire stat_signal = ((reg_lyc_int == 1'b1) && (reg_ly == reg_lyc)) ||
+                       ((reg_oam_int == 1'b1) && (reg_mode == PPU_MODE_OAM_SEARCH)) ||
+                       ((reg_vblank_int == 1'b1) && (reg_mode == PPU_MODE_V_BLANK)) ||
+                       ((reg_hblank_int == 1'b1) && (reg_mode == PPU_MODE_H_BLANK));
+                       
+    reg stat_signal_last;
+    
     // Interrupts
     always @(posedge clk)
-        if (rst)
-            reg_stat[2] <= 0;
-        else
-            reg_stat[2] <= (reg_ly == reg_lyc) ? 1 : 0;
-            
-    always @(posedge clk)
     begin
-        if (rst) begin
+        if (rst || !reg_lcd_en) begin
             int_vblank_req <= 0;
             int_lcdc_req <= 0;
             reg_ly_last[7:0] <= 0;
+            reg_stat[2] <= 0;
+            reg_mode_last <= PPU_MODE_V_BLANK;
+            stat_signal_last <= 0;
         end
-        else
-        begin
-            if ((reg_mode == PPU_MODE_V_BLANK)&&(reg_mode_last != PPU_MODE_V_BLANK))
+        else begin
+            // Flag de coincidencia LY == LYC
+            reg_stat[2] <= (reg_ly == reg_lyc) ? 1 : 0;
+
+            // Interrupción V-Blank pura
+            if ((reg_mode == PPU_MODE_V_BLANK) && (reg_mode_last != PPU_MODE_V_BLANK))
                 int_vblank_req <= 1;
             else if (int_vblank_ack)
                 int_vblank_req <= 0;
-            if (((reg_lyc_int == 1'b1)&&(reg_ly == reg_lyc)&&(reg_ly_last != reg_lyc))||
-                ((reg_oam_int == 1'b1)&&(reg_mode == PPU_MODE_OAM_SEARCH)&&(reg_mode_last != PPU_MODE_OAM_SEARCH))||
-                ((reg_vblank_int == 1'b1)&&(reg_mode == PPU_MODE_V_BLANK)&&(reg_mode_last != PPU_MODE_V_BLANK))||
-                ((reg_hblank_int == 1'b1)&&(reg_mode == PPU_MODE_H_BLANK)&&(reg_mode_last != PPU_MODE_H_BLANK)))
+
+            // FIX DKL: Edge-detector sobre el cable físico de STAT
+            // Si el juego habilita la interrupción tarde, detectará la subida de la señal.
+            if (stat_signal && !stat_signal_last)
                 int_lcdc_req <= 1;
             else if (int_lcdc_ack)
                 int_lcdc_req <= 0;
+
+            // Actualización de estado
             reg_ly_last <= reg_ly;
             reg_mode_last <= reg_mode;
+            stat_signal_last <= stat_signal;
         end
     end
     
